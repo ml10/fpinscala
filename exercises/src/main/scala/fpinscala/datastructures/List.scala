@@ -105,4 +105,20 @@ object List { // `List` companion object. Contains functions for creating and wo
   def map[A,B](l: List[A])(f: A => B): List[B] = {
     foldRight[A, List[B]](l, Nil)((x, y) => Cons(f(x), y))
   }
+
+  def reverse[A](l: List[A]): List[A] = 
+    foldLeft[A, List[A]](l, Nil)((x, y) => Cons(y, x))
+
+  def foldRight2[A,B](as: List[A], z: B)(f: (A, B) => B): B = {
+    foldLeft(reverse(l), z)((b, a) => f(a, b))
+  }
+
+  def foldLeft2[A,B](as: List[A], z: B)(f: (B,A) => B): B = {
+    def h(a: A, g: B => B): (B => B) = {
+      //((x: B) => g(f(x,a))
+      g compose ((x: B) => f(x,a))
+    }
+    as.foldRight(identity[B] _)(h _)(z)
+  }
+
 }
